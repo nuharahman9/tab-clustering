@@ -1,29 +1,39 @@
-function displayText(text) {
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerText = text;
-  }
+function extractTabText(tabId) { 
+    return new Promise((resolve, reject) => { 
+        chrome.scripting.executeScript({ 
+            target: { tabId: tabId }, 
+            function: () => { 
+                const pageText = document.documentElement.innerText
+                chrome.runtime.sendMessage({ text: pageText })
+            }
+        }, (results) => { 
+            if (chrome.runtime.lastError) { 
+                reject(chrome.runtime.lastError.message)
+            } else { 
+                resolve({ tabId: tabId, text: pageText })
+            }
+        }); 
+    }); 
+}
   
   // Listener for extract button click
-  document.getElementById('extractButton').addEventListener('click', () => {
+
+  document.getElementById('textCapture').addEventListener('click', () => {
     // Get current active tab
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTab = tabs[0];
-      // Send message to the background script to initiate text extraction
-      chrome.scripting.executeScript({
-        target: { tabId: activeTab.id },
-        function: extractText
-      }, (results) => {
-        // Extracted text will be sent back as a message
-        const extractedText = results[0].result;
-        // Display extracted text
-        displayText(extractedText);
-      });
-    });
-  });
-  
-  // Listener for messages from background script
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    // Display extracted text
-    displayText(message.text);
-  });
+        const promises = tabs.map(tab => { 
+            return new Promise((resolve, reject) => { 
+                extractTabText(tab.id)
+                .then(result => resolve(result))
+                .catch(err => reject(err))
+            }); 
+        }); 
+    }); 
+        // Send message to the background script to initiate text extraction
+    Promise.all(promises)
+        .then(results => {
+            console.log(results)})
+        .catch(error => {
+            console.error('Error extracting text from tabs:', error)});
+}); 
   
