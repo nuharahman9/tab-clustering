@@ -4,7 +4,7 @@ function extractTabText(tabId) {
             target: { tabId: tabId }, 
             function: () => { 
                 const pageText = document.documentElement.innerText
-                chrome.runtime.sendMessage({ text: pageText })
+                console.log(pageText); 
             }
         }, (results) => { 
             if (chrome.runtime.lastError) { 
@@ -18,7 +18,7 @@ function extractTabText(tabId) {
   
   // Listener for extract button click
 
-  document.getElementById('textCapture').addEventListener('click', () => {
+document.getElementById('textCapture').addEventListener('click', () => {
     // Get current active tab
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const promises = tabs.map(tab => { 

@@ -2,18 +2,22 @@
     "manifest_version": 3,
     "name": "Tab Clustering",
     "description": "my stupid project",
-    "permissions": ["tabs", "scripting", "<all_urls>"],
+    "permissions": ["tabs", "scripting"],
     "version": "1.0",
     "background": { 
       "service_worker": "bg.js"
     }, 
+    "host_permissions":[
+      "https://*/*",
+      "http://*/*"
+    ],
     "action": {
       "default_popup": "popup.html",
       "default_icon": "icon.png"
     }, 
     "content_scripts": [
       {
-        "matches": ["<all_urls"], 
+        "matches": ["<all_urls>"], 
         "css": ["extension.css"], 
         "js": ["popup.js"]
       }
