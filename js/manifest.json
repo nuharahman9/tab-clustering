@@ -5,10 +5,12 @@
     "permissions": ["tabs", "scripting"],
     "version": "1.0",
     "background": { 
-      "service_worker": "bg.js"
+      "service_worker": "bg.js", 
+      "type": "module"
     }, 
     "host_permissions":[
       "https://*/*",
+      
       "http://*/*"
     ],
     "action": {
