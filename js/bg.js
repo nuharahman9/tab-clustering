@@ -1,5 +1,5 @@
 function getTextContent() { 
-    console.log("i am getting de text"); 
+    console.log("get tetx"); 
     return document.body.innerText; 
 }
 
@@ -11,8 +11,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 chrome.scripting.executeScript({
                     target : { tabId: tab.id }, 
                     func : getTextContent
-                }).then(() => { 
-                    console.log("success"); 
+                }).then((results) => { 
+                    console.log(results); 
                 }); 
 
             }); 
