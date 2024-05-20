@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Tab Clustering",
     "description": "my stupid project",
-    "permissions": ["tabs", "activeTab", "scripting", "storage"],
+    "permissions": ["tabs", "activeTab", "scripting", "downloads"],
     "version": "1.0",
     "background": { 
       "service_worker": "bg.js", 
