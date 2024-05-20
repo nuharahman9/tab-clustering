@@ -1,4 +1,3 @@
-
 window.addEventListener('DOMContentLoaded', function() {
     var myBtn = document.getElementById('textCapture');
     myBtn.addEventListener('click', () => {
