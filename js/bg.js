@@ -1,29 +1,21 @@
-function writeToTextFile(text, tab) { 
-    console.log(text, tab)
-   const nm = tab.url.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.txt';
-   const textToWrite = tab.title + ' ' + tab.url + ' ' + text.result; 
-   const blob = new Blob([textToWrite], { type: 'text/plain' })
-   const urlobject = URL.createObjectURL(blob)
-
-   chrome.downloads.download({
-        url: urlobject, 
-        filename: nm, 
-        saveAs: false
-   }, (downloadId) => { 
-        if (chrome.runtime.lastError) { 
-            console.error(chrome.runtime.lastError); 
-        } else {    
-            console.log(`Download started for ${filename} with ID: ${downloadId}`);
-        }
-
-   })
-}
-
 
 function getTextContent() {
     return document.body.innerText;  
 }
 
+// sends text content of website to flask 
+function sendText(tab, text) {
+    fetch('http://localhost:4000/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: tab.id, url: tab.url, title: tab.title, text: text.result })
+    })
+    .then(response => response.json())
+    .then(data => console.log('data:', data))
+    .catch((error) => console.error(error));
+}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message === 'getText') { 
@@ -35,7 +27,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     func : getTextContent, 
                     args : [ tab.id ]
                 }).then((text) => { 
-                    writeToTextFile(text, tab); 
+                    sendText(tab, text); 
                 }); 
             }); 
 

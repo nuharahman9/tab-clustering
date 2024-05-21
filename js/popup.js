@@ -5,7 +5,6 @@ window.addEventListener('DOMContentLoaded', function() {
     }); 
 
 }); 
-  
 
 
 
