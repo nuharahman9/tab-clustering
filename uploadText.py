@@ -10,14 +10,16 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def upload_text():
     data = request.get_json()
     url = data.get('url')
-    content = data.get('content')
+    text = data.get('text')
+    print(url, text)
+    print("===================================================================================================================")
 
-    if url and content:
+    if url and text:
         filename = url.replace('http://', '').replace('https://', '').replace('/', '_') + '.txt'
         filepath = os.path.join(UPLOAD_FOLDER, filename)
 
         with open(filepath, 'w', encoding='utf-8') as file:
-            file.write(content)
+            file.write(text)
 
         return jsonify({'status': 'success', 'filename': filename}), 200
     else:
