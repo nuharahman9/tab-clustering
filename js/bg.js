@@ -5,7 +5,7 @@ function getTextContent() {
 
 // sends text content of website to flask 
 function sendText(tab, text) {
-    fetch('http://localhost:4000/upload', {
+    fetch('http://127.0.0.1:5000/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

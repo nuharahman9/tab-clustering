@@ -24,4 +24,4 @@ def upload_text():
         return jsonify({'status': 'failure', 'reason': 'Invalid data'}), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4000)
+    app.run(host='0.0.0.0', port=5000)
