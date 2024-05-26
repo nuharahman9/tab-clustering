@@ -1,0 +1,208 @@
+How to retrain a machine learning model in python till we get desired outcome - Stack Overflow Skip to main content
+Stack Overflow
+Products
+OverflowAI
+humanroach
+1
+, 1 reputation
+Share Your Experience: Take the 2024 Developer Survey
+Home
+Questions
+Tags
+Saves
+Users
+Companies
+LABS
+Jobs
+NEW
+Discussions
+COLLECTIVES
+
+Communities for your favorite technologies. Explore all Collectives
+
+TEAMS
+
+Ask questions, find answers and collaborate at work with Stack Overflow for Teams.
+
+Explore Teams Create a free Team
+
+Looking for your Teams?
+
+How to retrain a machine learning model in python till we get desired outcome
+Ask Question
+Asked 6 years, 10 months ago
+Modified 6 years, 10 months ago
+Viewed 513 times
+ Part of NLP Collective
+1
+
+I am building a topic model for customer feedbacks using the Non-Negative Matrix Factorization (NMF) topic model.
+
+Which creates topic clusters as follows:
+
+[(0, [u'reserved block', u'reserved block available', u'reserved block week', u'need reserved block']), (1, [u'hour block', u'package hour block', u'bring hour block', u'bring hour']), (2, [u'hard block', u'driver hard block', u'driver hard', u'gps horrible']), (3, [u'delivery block', u'hard delivery block', u'hard delivery', u'delivery block available']), (4, [u'block available', u'reserved block available', u'make block', u'make block available'])
+
+
+But, topic 0&4 and topic 2&3 are pretty much the same. I want to know how I can re-train the model so that it takes topic 0 & 4; topic 2 & 3 as one topic taking union of the keywords in both (& setting weights to them on the basis of their order & the ones those are common should also be given more weight).
+
+pythonmachine-learningtraining-datatopic-modeling
+Share
+Edit
+Follow
+Get updates on questions and answers
+asked Jul 10, 2017 at 18:59
+akrama81
+3511
+1 gold badge
+7
+7 silver badges
+18
+18 bronze badges
+Add a comment
+1 Answer
+Sorted by:
+Highest score (default)
+Trending (recent votes count more)
+Date modified (newest first)
+Date created (oldest first)
+0
+
+In general, if output of your NMF or LDA or other similar algorithm gives you a set of topics with some overlap first recommendation is simple - decrease number of topics. By doing this you naturally force algorithm to merge similar topics together. I would advice to try this and check the outcome.
+
+If you still want to manually mess with the results of the algorithm training and manually merge several topics together I would try to start with reading documentation on the specific algorithm you are using (NMF) and checking which of attributes define specific topics (attribute is called components_) and the words which define the topic. Then you may just update existing NMF instance to adjust its components. Though it will be a rather difficult task.
+
+UPDATED
+
+Another approach is to take the document to topic and word to topic matrixes (which are technically outputs of the algorithms) and manually update them. Check the article:
+
+https://medium.com/towards-data-science/improving-the-interpretation-of-topic-models-87fd2ee3847d
+
+In general, as the result of NMF you should get a 2 matrixes. One of them will show degree of membership of each document to each topic. Another - word weights towards each topic.
+
+When merging 2 topics you want to:
+
+1) Merge columns for topics in the document to topic matrix. For example if in this matrix you have a row which shows a document which had 50% membership for topic 1 and 10% membership for topic 2 as the result of merge you probably should obtain the membership to merged topic of 60%
+
+2) Merge rows for topics in the word to topic matrix. That's where it becomes non-trivial. As far as I understand you can't just sum up the weights for word towards specific topics (all weights should sum up to same number) but you may try to do this and see what happens.
+
+Share
+Edit
+Follow
+edited Jul 10, 2017 at 22:19
+answered Jul 10, 2017 at 20:57
+Maksim Khaitovich
+4,7827
+7 gold badges
+40
+40 silver badges
+72
+72 bronze badges
+I want that the user should be able to do this manually. I mean, which ever topic clusters they feel are irrelevant or duplicate, they should just be able to tell the machine to exclude those and the machine gradually learns that those are irrelevant or duplicate topic clusters. Is this possible to do? – 
+akrama81
+ Jul 10, 2017 at 21:39
+@akrama81 I don't think so just due to the nature of topic modelling. It estimates topics based on matrix decomposition or based on probability of a word occurrence, trying to fit best model given a number of topics. If you 'merge' topics that means you are trying to create a union of a words which describe the topic and that will screw up the whole model since distributions or decomposition will not 'sum up to 1'. – 
+Maksim Khaitovich
+ Jul 10, 2017 at 21:51
+@akrama81 the only thing I can come up with is to try to switch to LDA and based on user decision manually specify the frequency distribution for words in specific topics, but that will require some research – 
+Maksim Khaitovich
+ Jul 10, 2017 at 21:53
+Hmm, I already tried LDa but that does not give relevant topic clusters for our dataset. Thanks for your insight though! – 
+akrama81
+ Jul 10, 2017 at 21:56
+@akrama81 good luck. With NMF the issue is that it is a matrix decomposition thus it is much more difficult to understand how to decrease number of components and how to merge them. Maybe there is some research in this area but I didn't hear about it. – 
+Maksim Khaitovich
+ Jul 10, 2017 at 22:01
+Show 1 more comment
+Your Answer
+Post Your Answer
+Not the answer you're looking for? Browse other questions tagged pythonmachine-learningtraining-datatopic-modeling or ask your own question.
+NLP
+Collective
+Join the discussion
+ This question is in a collective: a subcommunity defined by tags with relevant content and experts.
+The Overflow Blog
+You should keep a developer’s journal
+Would you board a plane safety-tested by GenAI?
+Featured on Meta
+Testing a new version of Stack Overflow Jobs
+What deliverables would you like to see out of a working group?
+Policy: Generative AI (e.g., ChatGPT) is banned
+The 2024 Developer Survey Is Live
+The [price] tag is being burninated
+Hot Meta Posts
+8
+Is it acceptable to post over 100 lines of compiler-generated assembly for an...
+Related
+2
+How to load previously saved model and expand the model with new training data using scikit-learn
+3
+How do I avoid re-training machine learning models
+5
+Neurolab retrain the network
+2
+Retrain model in Tensorflow
+1
+Machine Learning re-training model with predictions
+5
+How to retrain logistic regression model in sklearn with new data
+5
+How to retrain/update keras model?
+1
+How to train a trained model with new examples in scikit-learn?
+2
+How can I retrain a model on new data without losing the earlier model
+1
+How do I retrain an already trained TensorFlow model with new data?
+Hot Network Questions
+Rotating a Pot of Boiling Water on a Stove
+Can "go into" ever be used to mean "used in" or "made of"?
+Computer is "locking up" both off and online
+sigqueue(3) semantics
+Keys and Locks Puzzle
+How to prove 79 cannot be expressed as sum of 18 4th powers of integers (from Rosen's Discrete Math Textbook)
+Health insurance in Belgium?
+How to change the same bone contraint value for multiple bones simultaneously?
+Campagnolo Ekar thumb shifter hooks from half of the cassette
+How to handle “next Monday” in reported speech?
+How to approach a project with NDA in academic research
+Path from humanities undergrad to math PhD
+Possible binding agent for Chlorine in blood?
+Unable to :set printoptions for :hardcopy command
+Why would email transmission change the 6-char sequence "0rom "?
+Authorship issue between two PhD students
+more hot questions
+ Question feed
+STACK OVERFLOW
+Questions
+Help
+PRODUCTS
+Teams
+Advertising
+Collectives
+Talent
+COMPANY
+About
+Press
+Work Here
+Legal
+Privacy Policy
+Terms of Service
+Contact Us
+Cookie Settings
+Cookie Policy
+STACK EXCHANGE NETWORK
+Technology
+Culture & recreation
+Life & arts
+Science
+Professional
+Business
+API
+Data
+Blog
+Facebook
+Twitter
+LinkedIn
+Instagram
+
+Site design / logo © 2024 Stack Exchange Inc; user contributions licensed under CC BY-SA. rev 2024.5.24.9787
