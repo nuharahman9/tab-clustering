@@ -4,6 +4,18 @@ function getTextContent() {
 }
 
 
+function cluster() { 
+    fetch('http://127.0.0.1:5000/cluster', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+      .then(data => console.log("data: ", data))
+      .catch((error) => console.error(error))
+}
+
+
 // sends text content of website to flask 
 function sendText(tab, text) {
     fetch('http://127.0.0.1:5000/upload', {
@@ -19,7 +31,6 @@ function sendText(tab, text) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    
     if (message === 'getText') {    
         console.log("background"); 
         chrome.tabs.query({ currentWindow: true }, tabs => { 
@@ -32,10 +43,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                    sendText(tab, text); 
                 }); 
             });
-            
-            cluster(); 
 
-        }); 
+        }).then(() => cluster()); 
 
     }
 

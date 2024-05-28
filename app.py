@@ -17,11 +17,13 @@ def cluster():
     global nmf_model
     global url_id_map 
     topics_website_ids_map = {}
+    print(url_id_map)
     topic_doc_map = nmf_model.driver()
     if topic_doc_map: 
         for topicNum, documents in topic_doc_map: 
             for doc in documents: 
-                topics_website_ids_map[topicNum].append(url_id_map[doc]) # get corresponding tab id - should change later but jsut for the sake of testing so we can see the grouping of topics in our terminal instead of looking at tab id's! :) 
+                topics_website_ids_map[topicNum].append(url_id_map[doc]) # get corresponding tab id - should change later but jsut for the sake of testing so we can see the grouping of topics in our terminal instead of looking at tab id's! :)
+        print(topics_website_ids_map) 
         return jsonify({
             'groups': topics_website_ids_map, 
             'status': 200
@@ -33,7 +35,6 @@ def cluster():
         })
 
 
-s
 @app.route('/upload', methods=['POST']) 
 def upload_text():
     data = request.get_json()
@@ -50,8 +51,12 @@ def upload_text():
         filename += '.txt'
         url_id_map[filename] = id 
         filepath = os.path.join(UPLOAD_FOLDER, filename) # create file under tab id 
-        with open(filepath, 'w', encoding='utf-8') as file:
-            file.write(url, '\n', title, ' ', text)
+        with open(filepath, 'a', encoding='utf-8') as file:
+            file.write(url) 
+            file.write('\n')
+            file.write(title)
+            file.write('\n')
+            file.write(text)
         return jsonify({'status': 'success', }), 200
     else:
         return jsonify({'status': 'failure', 'reason': 'Invalid data'}), 400
