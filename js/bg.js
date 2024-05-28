@@ -3,6 +3,7 @@ function getTextContent() {
     return document.body.innerText;  
 }
 
+
 // sends text content of website to flask 
 function sendText(tab, text) {
     fetch('http://127.0.0.1:5000/upload', {
@@ -18,7 +19,8 @@ function sendText(tab, text) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message === 'getText') { 
+    
+    if (message === 'getText') {    
         console.log("background"); 
         chrome.tabs.query({ currentWindow: true }, tabs => { 
             tabs.forEach(tab => {  
@@ -27,9 +29,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     func : getTextContent, 
                     args : [ tab.id ]
                 }).then((text) => { 
-                    sendText(tab, text); 
+                   sendText(tab, text); 
                 }); 
-            }); 
+            });
+            
+            cluster(); 
 
         }); 
 
