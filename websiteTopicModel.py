@@ -54,9 +54,9 @@ class websiteTopicModel:
             text = text.strip()
             text = text.lower()
             tokenized_words = word_tokenize(text)
-            tokenized_words = [w for w in tokenized_words if w not in self.stop]
+            tokenized_words = [w for w in tokenized_words if w not in self.stopwords]
             tokenized_words = [self.ps.stem(word) for word in tokenized_words]
-            self.websites_preprocessed_data(' '.join(tokenized_words)) 
+            self.websites_preprocessed_data.append(' '.join(tokenized_words)) 
         
     
     def generate_nmf_model(self): 
@@ -66,7 +66,7 @@ class websiteTopicModel:
 
     def get_topics(self): 
         terms = self.vectorizer.get_feature_names_out()
-        for index, topic in enumerate(self.J):
+        for index, topic in enumerate(self.H):
             self.topics.append([terms[i] for i in topic.argsort()[-3:]])
     
     def map_topics_to_websites(self): 
@@ -85,7 +85,7 @@ class websiteTopicModel:
         return self.topic_doc_map
     
     def driver(self):
-        self.load_corpus_paths('./corpus')
+        self.load_corpus_paths('./corpus/')
         self.read_txt()
         self.generate_nmf_model()
         self.get_topics() 

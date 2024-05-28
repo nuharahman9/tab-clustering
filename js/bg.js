@@ -1,20 +1,18 @@
-
 function getTextContent() {
     return document.body.innerText;  
 }
 
-
 function cluster() { 
+    console.log('js in cluster')
     fetch('http://127.0.0.1:5000/cluster', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json())
-      .then(data => console.log("data: ", data))
-      .catch((error) => console.error(error))
-}
+      .then(data => console.log("data: ", data)); 
 
+}
 
 // sends text content of website to flask 
 function sendText(tab, text) {
@@ -26,26 +24,31 @@ function sendText(tab, text) {
       body: JSON.stringify({ id: tab.id, url: tab.url, title: tab.title, text: text[0].result })
     })
     .then(response => response.json())
-    .then(data => console.log('data:', data))
-    .catch((error) => console.error(error));
+    .then(data => console.log('data:', data)); 
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message === 'getText') {    
         console.log("background"); 
-        chrome.tabs.query({ currentWindow: true }, tabs => { 
-            tabs.forEach(tab => {  
-                chrome.scripting.executeScript({
-                    target : { tabId: tab.id }, 
-                    func : getTextContent, 
-                    args : [ tab.id ]
-                }).then((text) => { 
-                   sendText(tab, text); 
-                }); 
+        chrome.tabs.query({ currentWindow: true }, tabs => {
+            let promises = tabs.map(tab => {
+                return chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    func: getTextContent,
+                    args: [tab.id]
+                }).then(text => {
+                    sendText(tab, text);
+                });
             });
 
-        }).then(() => cluster()); 
-
+            Promise.all(promises).then(() => {
+                cluster();
+            }).catch(error => {
+                console.error("err: ", error);
+            });
+        });
     }
+});
 
-}); 
+
+

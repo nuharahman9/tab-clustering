@@ -7,7 +7,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'corpus'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-nmf_model = websiteTopicModel()
+nmf_model = None 
 url_id_map = {} 
 
 
@@ -16,9 +16,14 @@ def cluster():
     # add something here that takes the number of windows and init nmf here instead - still need to grab this from javascript 
     global nmf_model
     global url_id_map 
+    
+
+    nmf_model = websiteTopicModel() 
     topics_website_ids_map = {}
     print(url_id_map)
+    print("in cluster!!!\n")
     topic_doc_map = nmf_model.driver()
+    print(topic_doc_map)
     if topic_doc_map: 
         for topicNum, documents in topic_doc_map: 
             for doc in documents: 
@@ -26,7 +31,8 @@ def cluster():
         print(topics_website_ids_map) 
         return jsonify({
             'groups': topics_website_ids_map, 
-            'status': 200
+            'status': 200, 
+            'message': 'biiiitch'
         })
     else: 
         return jsonify({
