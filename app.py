@@ -20,11 +20,15 @@ def cluster():
 
     nmf_model = websiteTopicModel() 
     topics_website_ids_map = {}
+    print("\n==========================================APP.PY URL TO ID====================================\n")
     print(url_id_map)
+    print("\n==========================================APP.PY URL TO ID ====================================\n")
     print("in cluster!!!\n")
     topic_doc_map = nmf_model.driver()
+    print("\n==========================================APP.PY RETURNED OUTPUT====================================\n")
     print(topic_doc_map)
-    if topic_doc_map: 
+    print("\n==========================================APP.PY RETURNED OUTPUT====================================\n")
+    if topic_doc_map:  
         for topicNum, documents in topic_doc_map: 
             for doc in documents: 
                 topics_website_ids_map[topicNum].append(url_id_map[doc]) # get corresponding tab id - should change later but jsut for the sake of testing so we can see the grouping of topics in our terminal instead of looking at tab id's! :)
@@ -55,8 +59,8 @@ def upload_text():
         # truncate file name 
         filename = (data[:20] + '..') if len(data) > 20 else filename 
         filename += '.txt'
-        url_id_map[filename] = id 
         filepath = os.path.join(UPLOAD_FOLDER, filename) # create file under tab id 
+        url_id_map['./corpus/' + filename] = id # doesnt include the . for some reason ... 
         with open(filepath, 'a', encoding='utf-8') as file:
             file.write(url) 
             file.write('\n')

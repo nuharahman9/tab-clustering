@@ -20,6 +20,8 @@ class websiteTopicModel:
     topic_doc_map: list[str]    
     nmf_model: NMF 
     ps: PorterStemmer 
+    H: np.ndarray 
+    W: np.ndarray 
     stopwords: stopwords
         
 
@@ -62,7 +64,7 @@ class websiteTopicModel:
     def generate_nmf_model(self): 
         x = self.vectorizer.fit_transform(self.websites_preprocessed_data)
         self.W = self.nmf_model.fit_transform(x)
-        self.H = self.nmf_model.n_components
+        self.H = self.nmf_model.components_ 
 
     def get_topics(self): 
         terms = self.vectorizer.get_feature_names_out()
@@ -76,11 +78,7 @@ class websiteTopicModel:
             max_topic_score = np.argmax(topic_scores)
             self.topic_doc_map[max_topic_score].append(self.file_paths[doc_index])
 
-        for topic, doc_indices in self.topic_doc_map.items():
-            print(f"Topic {topic + 1}:")
-            for doc_index in doc_indices:
-                print(f"{self.file_paths[doc_index]}")
-            print()
+        print(self.topic_doc_map)
         
         return self.topic_doc_map
     
