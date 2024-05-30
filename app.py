@@ -29,9 +29,11 @@ def cluster():
     print(topic_doc_map)
     print("\n==========================================APP.PY RETURNED OUTPUT====================================\n")
     if topic_doc_map:  
-        for topicNum, documents in topic_doc_map: 
-            for doc in documents: 
-                topics_website_ids_map[topicNum].append(url_id_map[doc]) # get corresponding tab id - should change later but jsut for the sake of testing so we can see the grouping of topics in our terminal instead of looking at tab id's! :)
+        for topicNum, file_paths in topic_doc_map.items(): 
+            print(f"Topic {topicNum}:")
+            for file in file_paths: 
+                print(f"  - {file}")
+                topics_website_ids_map[topicNum].append(url_id_map[file])
         print(topics_website_ids_map) 
         return jsonify({
             'groups': topics_website_ids_map, 
