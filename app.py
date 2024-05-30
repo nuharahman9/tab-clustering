@@ -33,7 +33,11 @@ def cluster():
             print(f"Topic {topicNum}:")
             for file in file_paths: 
                 print(f"  - {file}")
-                topics_website_ids_map[topicNum].append(url_id_map[file])
+                print(type(file))
+                if topicNum not in topics_website_ids_map: 
+                    topics_website_ids_map[topicNum] = [url_id_map[file]]
+                else: 
+                    topics_website_ids_map[topicNum].append(url_id_map[file])
         print(topics_website_ids_map) 
         return jsonify({
             'groups': topics_website_ids_map, 
