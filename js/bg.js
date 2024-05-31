@@ -2,6 +2,20 @@ function getTextContent() {
     return document.body.innerText;  
 }
 
+
+function rearrangeTabs(tabGroups) { 
+    for (const topic in tabGroups) { 
+        const tabIds = tabGroups[topic]
+        chrome.windows.create({ tabId: tabIds[0] }, newWindow => { 
+            const remainingTabs = tabIds.shift()
+            if (tabIds.length > 0) { 
+                chrome.tabs.move(remainingTabs, moveProperties = { windowId: newWindow.id })
+            }
+        })
+    }
+}
+
+
 function cluster() { 
     console.log('js in cluster')
     fetch('http://127.0.0.1:5000/cluster', {
@@ -10,7 +24,12 @@ function cluster() {
           'Content-Type': 'application/json'
         }
       }).then(response => response.json())
-      .then(data => console.log("data: ", data)); 
+      .then(data => {
+        console.log("data: ", data)
+        if (data.status === 200) { 
+            rearrangeTabs(data.groups)
+        }
+      }); 
 
 }
 

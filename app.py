@@ -33,7 +33,6 @@ def cluster():
             print(f"Topic {topicNum}:")
             for file in file_paths: 
                 print(f"  - {file}")
-                print(type(file))
                 if topicNum not in topics_website_ids_map: 
                     topics_website_ids_map[topicNum] = [url_id_map[file]]
                 else: 
@@ -75,7 +74,7 @@ def upload_text():
             file.write(text)
         return jsonify({'status': 'success', }), 200
     else:
-        return jsonify({'status': 'failure', 'reason': 'Invalid data'}), 400
+        return jsonify({'status': 'failure', 'reason': 'Invalid data', url: url}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
