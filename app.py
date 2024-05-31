@@ -11,12 +11,35 @@ nmf_model = None
 url_id_map = {} 
 
 
+# @app.route('/cleanup', methods=['DELETE']) 
+# def cleanup(): 
+#     deleted = {} 
+#     for filepath in url_id_map: 
+#         filepath = filepath.replace(filepath[0], "", 1)
+#         if os.path.exists(filepath): 
+#             os.remove(filepath)
+#             deleted.append(filepath)
+#         else: 
+#             return jsonify({
+#                 'status': 500,
+#                 'message': "failed to delete file path", 
+#                 'filepath': filepath
+#             })
+#     return jsonify({
+#         'status': 200,
+#         'message': 'all files successfully deleted', 
+#         'deleted': deleted
+#     })
+
+
+
+
 @app.route('/cluster', methods=['GET'])
 def cluster(): 
     # add something here that takes the number of windows and init nmf here instead - still need to grab this from javascript 
     global nmf_model
     global url_id_map 
-    
+    print("app.py: in cluster\n")
 
     nmf_model = websiteTopicModel() 
     topics_website_ids_map = {}
@@ -72,9 +95,9 @@ def upload_text():
             file.write(title)
             file.write('\n')
             file.write(text)
-        return jsonify({'status': 'success', }), 200
+        return jsonify({ 'url': url, 'id': id, 'status': 200 })
     else:
-        return jsonify({'status': 'failure', 'reason': 'Invalid data', url: url}), 400
+        return jsonify({ 'reason': 'Invalid data', 'status': 400, 'url': url})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

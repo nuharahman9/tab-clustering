@@ -18,18 +18,17 @@ function rearrangeTabs(tabGroups) {
 
 function cluster() { 
     console.log('js in cluster')
-    fetch('http://127.0.0.1:5000/cluster', {
+    fetch('http://127.0.0.1:5000/cluster', { 
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => response.json())
-      .then(data => {
-        console.log("data: ", data)
-        if (data.status === 200) { 
-            rearrangeTabs(data.groups)
-        }
-      }); 
+      }).then(response => {
+        data = response.json()
+        console.log(data)
+      }
+      
+      )
 
 }
 
@@ -56,11 +55,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     func: getTextContent,
                     args: [tab.id]
                 }).then(text => {
-                    sendText(tab, text);
-                });
+                    return sendText(tab, text);
+                }).catch(e => { 
+                    console.error("error: ", e)
+                })
+                ;
             });
 
             Promise.all(promises).then(() => {
+                console.log("in promise"); 
                 cluster();
             }).catch(error => {
                 console.error("err: ", error);
