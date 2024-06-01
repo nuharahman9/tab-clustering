@@ -85,7 +85,7 @@ def upload_text():
     if url and text:
         filename = url.replace('http://', '').replace('https://', '').replace('/', '_')
         # truncate file name 
-        filename = (data[:20] + '..') if len(data) > 20 else filename 
+        filename = filename[:20] if len(filename) > 20 else filename 
         filename += '.txt'
         filepath = os.path.join(UPLOAD_FOLDER, filename) # create file under tab id 
         url_id_map['./corpus/' + filename] = id # doesnt include the . for some reason ... 
