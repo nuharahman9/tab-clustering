@@ -16,20 +16,21 @@ function rearrangeTabs(tabGroups) {
 }
 
 
-function cluster() { 
+async function cluster() { 
     console.log('js in cluster')
-    fetch('http://127.0.0.1:5000/cluster', { 
+    const response = await fetch('http://127.0.0.1:5000/cluster', { 
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => {
-        data = response.json()
-        console.log(data)
-      }
-      
-      )
+    })
 
+    const json = await response.json()
+    console.log(json)
+    
+    if (json.status === 200) { 
+        rearrangeTabs(json.groups)
+    }
 }
 
 // sends text content of website to flask 
@@ -41,8 +42,8 @@ function sendText(tab, text) {
       },
       body: JSON.stringify({ id: tab.id, url: tab.url, title: tab.title, text: text[0].result })
     })
-    .then(response => response.json())
-    .then(data => console.log('data:', data)); 
+    .then(response => response.json()); 
+   // .then(data => console.log('data:', )); 
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

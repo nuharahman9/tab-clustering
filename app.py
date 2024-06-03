@@ -61,6 +61,7 @@ def cluster():
                 else: 
                     topics_website_ids_map[topicNum].append(url_id_map[file])
         print(topics_website_ids_map) 
+        print(jsonify(topics_website_ids_map))
         return jsonify({
             'groups': topics_website_ids_map, 
             'status': 200, 
