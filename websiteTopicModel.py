@@ -77,8 +77,6 @@ class websiteTopicModel:
         for doc_index, topic_scores in enumerate(self.W):
             max_topic_score = np.argmax(topic_scores)
             self.topic_doc_map[max_topic_score].append(self.file_paths[doc_index])
-
-        print(self.topic_doc_map)
         
         return self.topic_doc_map
     

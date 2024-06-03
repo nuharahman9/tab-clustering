@@ -3,14 +3,13 @@ function getTextContent() {
 }
 
 
-function rearrangeTabs(tabGroups) { 
+async function rearrangeTabs(tabGroups) { 
+    console.log(tabGroups)
     for (const topic in tabGroups) { 
-        const tabIds = tabGroups[topic]
+        let tabIds = tabGroups[topic]
         chrome.windows.create({ tabId: tabIds[0] }, newWindow => { 
-            const remainingTabs = tabIds.shift()
-            if (tabIds.length > 0) { 
-                chrome.tabs.move(remainingTabs, moveProperties = { windowId: newWindow.id })
-            }
+            tabIds.shift() 
+            chrome.tabs.move(tabIds, { index: 0, windowId: newWindow.id })
         })
     }
 }
@@ -26,11 +25,11 @@ async function cluster() {
     })
 
     const json = await response.json()
-    console.log(json)
-    
+    // console.log(json)
     if (json.status === 200) { 
         rearrangeTabs(json.groups)
     }
+
 }
 
 // sends text content of website to flask 
