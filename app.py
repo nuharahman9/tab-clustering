@@ -34,14 +34,16 @@ url_id_map = {}
 
 
 
-@app.route('/cluster', methods=['GET'])
+@app.route('/cluster', methods=['POST'])
 def cluster(): 
     # add something here that takes the number of windows and init nmf here instead - still need to grab this from javascript 
     global nmf_model
     global url_id_map 
     print("app.py: in cluster\n")
-
-    nmf_model = websiteTopicModel() 
+    data = request.get_json()
+    numWindows = data.get('numWindows', -1)
+    numWindows = int(numWindows)
+    nmf_model = websiteTopicModel(n_components=numWindows) 
     topics_website_ids_map = {}
     print("\n==========================================APP.PY URL TO ID====================================\n")
     print(url_id_map)

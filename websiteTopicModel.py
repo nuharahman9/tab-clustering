@@ -25,8 +25,8 @@ class websiteTopicModel:
     stopwords: stopwords
         
 
-    def __init__(self, n_components=4): 
-        self.n_components = n_components
+    def __init__(self, n_components): 
+        self.n_components = n_components if n_components != -1 else 4 
         self.vectorizer = TfidfVectorizer(norm='l2', smooth_idf=True, ngram_range=(2, 3))
         self.file_paths = []
         self.tfidf_matrix = None 

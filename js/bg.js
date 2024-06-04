@@ -15,13 +15,16 @@ async function rearrangeTabs(tabGroups) {
 }
 
 
-async function cluster() { 
+async function cluster(numWindows) { 
     console.log('js in cluster')
     const response = await fetch('http://127.0.0.1:5000/cluster', { 
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        }, 
+        body: JSON.stringify({ 
+            numWindows: numWindows
+        })
     })
 
     const json = await response.json()
@@ -45,9 +48,29 @@ function sendText(tab, text) {
    // .then(data => console.log('data:', )); 
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message === 'getText') {    
-        console.log("background"); 
+
+function getTabCount() { 
+    chrome.tabs.query({ currentWindow: true }), tabs => { 
+        let data = { 
+            msg: 'tabCount', 
+            len: tabs.length 
+        }
+        console.log(data)
+        chrome.runtime.sendMessage(data)
+    }
+}
+
+
+chrome.action.onClicked.addListener(() => {
+    console.log("event triggered")
+    getTabCount(); 
+}); 
+
+
+chrome.runtime.onMessage.addListener((data) => {
+    if (data.message === 'getText') {    
+        let numWindows = data.numWindows
+        console.log(numWindows);  
         chrome.tabs.query({ currentWindow: true }, tabs => {
             let promises = tabs.map(tab => {
                 return chrome.scripting.executeScript({
@@ -64,12 +87,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             Promise.all(promises).then(() => {
                 console.log("in promise"); 
-                cluster();
+                cluster(numWindows);
             }).catch(error => {
                 console.error("err: ", error);
             });
         });
     }
+
+    
+
+
 });
 
 
