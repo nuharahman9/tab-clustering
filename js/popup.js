@@ -1,7 +1,8 @@
 window.addEventListener('DOMContentLoaded', function() {
     var myBtn = document.getElementById('textCapture')
     var numWindows = document.getElementById('numWindows'); 
-    console.log(numWindows)
+  //  var popup = document.getElementById('popup-window')
+    var domainNm = document.getElementById('clusterDomain'); 
     myBtn.addEventListener('click', () => {
         let data = { 
             message: 'getText', 
@@ -10,6 +11,13 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(data)
        this.chrome.runtime.sendMessage(data); 
     }); 
+
+    domainNm.addEventListener('click', () => {
+        this.chrome.runtime.sendMessage({
+            message: 'clusterUrl'
+        }); 
+    })
+
 
 }); 
 

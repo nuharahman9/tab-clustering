@@ -16,6 +16,29 @@ function rearrangeTabs(tabGroups) {
     }
 }
 
+function groupByDomain(tabs) { 
+    let domain_tabIds = {}
+    for (let tab of tabs) { 
+        let url = tab.url 
+        var pathArr = url.split('/')
+        var host = pathArr[2]
+        if (domain_tabIds[host]) {
+            let curr = domain_tabIds[host]
+            curr.push(tab.id)
+            domain_tabIds[host] = curr
+        } else { 
+            domain_tabIds[host] = [tab.id]
+        }
+    }
+
+    console.log("groupbyDomanin: ", domain_tabIds)
+
+    rearrangeTabs(domain_tabIds)
+}
+
+
+
+
 
 async function cluster(numWindows) { 
     console.log('js in cluster')
@@ -63,10 +86,6 @@ function getTabCount() {
 }
 
 
-chrome.action.onClicked.addListener(() => {
-    console.log("event triggered")
-    getTabCount(); 
-}); 
 
 
 chrome.runtime.onMessage.addListener((data) => {
@@ -96,7 +115,10 @@ chrome.runtime.onMessage.addListener((data) => {
         });
     }
 
-    
+    else if (data.message === 'clusterUrl') { 
+        chrome.tabs.query({ currentWindow: true }, tabs => groupByDomain(tabs)); 
+    }
+
 
 
 });
