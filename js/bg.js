@@ -3,14 +3,16 @@ function getTextContent() {
 }
 
 
-async function rearrangeTabs(tabGroups) { 
+function rearrangeTabs(tabGroups) { 
     console.log(tabGroups)
     for (const topic in tabGroups) { 
         let tabIds = tabGroups[topic]
-        chrome.windows.create({ tabId: tabIds[0] }, newWindow => { 
-            tabIds.shift() 
-            chrome.tabs.move(tabIds, { index: 0, windowId: newWindow.id })
-        })
+        if (tabIds.length) {  // needs to have better error handling 
+            chrome.windows.create({ tabId: tabIds[0] }, newWindow => { 
+                tabIds.shift() 
+                chrome.tabs.move(tabIds, { index: 0, windowId: newWindow.id })
+            })
+        }
     }
 }
 
