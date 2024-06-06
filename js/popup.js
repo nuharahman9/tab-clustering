@@ -1,8 +1,14 @@
 async function getNumWindows() { 
-    const response = await chrome.runtime.sendMessage({
-        message: 'getNumWindows'
+    await chrome.tabs.query({ currentWindow: true }).then(tabs => { 
+        tabLen = tabs.length 
+        $(document).ready(function() {
+            $("#numWindows").attr({
+                "min": 1, 
+                "max": tabLen
+            })
+        })
+
     }); 
-    console.log(response)
 }
 
 let options = {
