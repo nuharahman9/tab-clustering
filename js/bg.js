@@ -1,8 +1,10 @@
+// grabs the text from document 
 function getTextContent() {
     return document.body.innerText;  
 }
 
 
+// recieves groups for tabs 
 function rearrangeTabs(tabGroups) { 
     console.log(tabGroups)
     for (const topic in tabGroups) { 
@@ -16,6 +18,7 @@ function rearrangeTabs(tabGroups) {
     }
 }
 
+// call cluster by url 
 function groupByDomain(tabs) { 
     let domain_tabIds = {}
     for (let tab of tabs) { 
@@ -31,15 +34,14 @@ function groupByDomain(tabs) {
         }
     }
 
-    console.log("groupbyDomanin: ", domain_tabIds)
+    console.log("groupbyDomain: ", domain_tabIds)
 
     rearrangeTabs(domain_tabIds)
 }
 
 
 
-
-
+// call cluster method using NMF 
 async function cluster(numWindows) { 
     console.log('js in cluster')
     const response = await fetch('http://127.0.0.1:5000/cluster', { 
@@ -74,6 +76,7 @@ function sendText(tab, text) {
 }
 
 
+// get window bounds for input option 
 function getTabCount() { 
     chrome.tabs.query({ currentWindow: true }), tabs => { 
         let data = { 
@@ -87,11 +90,10 @@ function getTabCount() {
 
 
 
-
-chrome.runtime.onMessage.addListener((data) => {
+// communication with popup script 
+chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
     if (data.message === 'getText') {    
         let numWindows = data.numWindows
-        console.log(numWindows);  
         chrome.tabs.query({ currentWindow: true }, tabs => {
             let promises = tabs.map(tab => {
                 return chrome.scripting.executeScript({
@@ -117,6 +119,11 @@ chrome.runtime.onMessage.addListener((data) => {
 
     else if (data.message === 'clusterUrl') { 
         chrome.tabs.query({ currentWindow: true }, tabs => groupByDomain(tabs)); 
+    }
+
+    else if (data.message === 'getNumWindows') { 
+        console.log("bg js  get numWindows")
+        chrome.tabs.query({ currentWindow: true }, tabs => sendResponse({ numWindows: tabs.length })); 
     }
 
 
