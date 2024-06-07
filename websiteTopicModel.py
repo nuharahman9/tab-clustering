@@ -30,7 +30,7 @@ class websiteTopicModel:
         self.vectorizer = TfidfVectorizer(norm='l2', smooth_idf=True, ngram_range=(2, 3))
         self.file_paths = []
         self.tfidf_matrix = None 
-        self.nmf_model = NMF(n_components=n_components, random_state=60)
+        self.nmf_model = NMF(n_components=({True: 'auto', False: n_components} [n_components==-1]), init="nndsvd", random_state=60)
         self.tokens = None 
         self.W = None 
         self.ps = PorterStemmer()
