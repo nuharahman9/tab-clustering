@@ -46,7 +46,7 @@ let options = {
 
 let observer = new IntersectionObserver(getNumWindows, options)
 
-let target = document.querySelector("#numwindows"); 
+let target = document.querySelector("#numWindows"); 
 console.log(target)
 observer.observe(target); 
 
