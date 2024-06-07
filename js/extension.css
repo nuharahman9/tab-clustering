@@ -1,4 +1,9 @@
 .btn { 
     background-color: white;
+}
+
+
+#popup-window {
+    min-width: 150px;
 
 }

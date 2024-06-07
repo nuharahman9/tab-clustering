@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="extension.css">
   <script src="jquery-3.7.1.min.js"></script>
-  <script src="popup.js" defer></script>
+  <script src="popup.js" defer></script> 
 </head>
 <div id="popup-window"> 
-  <form> 
+  <button class="scroll-button" id="left-scroll">&#171;</button>
+  <div class="slide">
     <label for="numWindows">Select number of windows:</label>
-    <input type="number" id="numWindows" name="numWindows"><br><
-    </form>
-  <button id="textCapture">cluster</button>
-  <button id="clusterDomain">cluster by url</button>
+    <input type="number" id="numWindows" name="numWindows"></br>
+    <button id="textCapture">cluster</button>
+  </div>
+  <div class="slide">
+    <button id="clusterDomain">cluster by url</button>
+  </div>
+  <div class="slide"></div>
+  <button class="scroll-button" id="right-scroll">&#187;</button>
   </div>
 </html>
