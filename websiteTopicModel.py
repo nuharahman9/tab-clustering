@@ -30,7 +30,6 @@ class websiteTopicModel:
         self.vectorizer = TfidfVectorizer(norm='l2', smooth_idf=True, max_features=5000, max_df=0.95, ngram_range=(2, 3))
         self.file_paths = []
         self.tfidf_matrix = None 
-        self.nmf_model = None 
         self.tokens = None 
         self.W = None 
         self.ps = PorterStemmer()
@@ -79,18 +78,23 @@ class websiteTopicModel:
 
 
     def approximate_best_n(self): 
-        max = math.round(len(self.file_paths) / 2) 
+        max = math.ceil(len(self.file_paths) / 2) 
         min = 2
+        c = 0 
         min_error = float('inf')
-        for i in range(min, max): # dont wanna have a window with just one page - open for suggestion on this one ?
+        print("approximate_best_n: ", max, min)
+        for i in range(min, max+2): # dont wanna have a window with just one page - open for suggestion on this one ?
             print('i = ', i)
             curr_nmf = NMF(n_components=i, random_state=60, solver='mu', max_iter=150)
-            curr_nmf.fit_transform(self.tfidf_matrix)
+            curr_nmf.fit_transform(self.tfidf_matrix) 
             if (curr_nmf.reconstruction_err_ < min_error): 
                 min_error = curr_nmf.reconstruction_err_ 
-                print("best reconstruction error: ", min_error)
-                self.nmf_model = curr_nmf
-        print("best number of components: ", self.nmf_model.n_components_)
+                print(min_error)
+                c = i 
+        print("best number of components: ", c) 
+        self.nmf_model = NMF(n_components=c, random_state=60, solver='mu', max_iter=150)
+        print(type(self.nmf_model))
+
 
 
     def get_topics(self): 
