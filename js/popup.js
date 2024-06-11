@@ -17,7 +17,7 @@ function showDiv(n) {
     for (i = 0; i < x.length; i++) { 
         x[i].style.display = "none"; 
     }
-
+    // fix this later - keeps throwing an error !!! 
     x[slideIdx-1].style.display =  "block"
 }
 
@@ -25,7 +25,6 @@ function showDiv(n) {
 
 
 async function getNumWindows() { 
-    console.log("get num windows triggered")
     await chrome.tabs.query({ currentWindow: true }).then(tabs => { 
         tabLen = tabs.length 
         $(document).ready(function() {
@@ -47,7 +46,6 @@ let options = {
 let observer = new IntersectionObserver(getNumWindows, options)
 
 let target = document.querySelector("#numWindows"); 
-console.log(target)
 observer.observe(target); 
 
 
