@@ -8,6 +8,8 @@ from nltk.stem import PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import NMF 
 from collections import Counter 
+from gensim.models.coherencemodel import CoherenceModel
+from gensim.corpora.dictionary import Dictionary 
 import math
 import re 
 
@@ -75,22 +77,37 @@ class websiteTopicModel:
             self.nmf_model = NMF(n_components=self.n_components, random_state=1, max_iter=150, solver='mu')
         self.W = self.nmf_model.fit_transform(self.tfidf_matrix)
         self.H = self.nmf_model.components_ 
+    
+    def convert_strings_to_words(self): 
+        word_lists = [] 
+        for website in self.websites_preprocessed_data: 
+            words = website.split()
+            word_lists.append(words)
+        return word_lists 
 
 
-    def approximate_best_n(self): 
-        max = math.ceil(len(self.file_paths) / 2) 
+    def approximate_best_n(self):
+        terms = self.vectorizer.get_feature_names_out() 
+        word_lists = self.convert_strings_to_words()
+        dict = Dictionary(word_lists)
+        dict.filter_extremes(
+            no_above=0.85, 
+            keep_n=5000
+        )
+        max = math.ceil(len(self.file_paths)) 
         min = 2
         c = 0 
-        min_error = float('inf')
-        print("approximate_best_n: ", max, min)
-        for i in range(min, max+2): # dont wanna have a window with just one page - open for suggestion on this one ?
+        print("approximate_best_n: ", min, max)
+        for i in range(min, max): # dont wanna have a window with just one page - open for suggestion on this one ?
             print('i = ', i)
-            curr_nmf = NMF(n_components=i, random_state=60, solver='mu', max_iter=150)
-            curr_nmf.fit_transform(self.tfidf_matrix) 
-            if (curr_nmf.reconstruction_err_ < min_error): 
-                min_error = curr_nmf.reconstruction_err_ 
-                print(min_error)
-                c = i 
+            curr_topics = [] 
+            self.nmf_model = NMF(n_components=i, random_state=60, solver='mu', max_iter=150)
+            self.W = self.nmf_model.fit_transform(self.tfidf_matrix)
+            self.H = self.nmf_model.components_  
+            curr_topics = self.get_topics()
+            cm = CoherenceModel(topics=curr_topics, texts=word_lists, dictionary=dict, coherence='c_uci')
+            print(round(cm.get_coherence(), 5))
+
         print("best number of components: ", c) 
         self.nmf_model = NMF(n_components=c, random_state=60, solver='mu', max_iter=150)
         print(type(self.nmf_model))
@@ -98,10 +115,17 @@ class websiteTopicModel:
 
 
     def get_topics(self): 
+        topics = [] 
         terms = self.vectorizer.get_feature_names_out()
         for index, topic in enumerate(self.H):
-            self.topics.append([terms[i] for i in topic.argsort()[-3:]])
-    
+            top_terms = topics.append([terms[i] for i in topic.argsort()[-3:]])
+            words = [] 
+            for term in top_terms: 
+                words.extend(term.split())
+            topics.append(words)
+        print(topics)
+        return topics 
+
     def map_topics_to_websites(self): 
         self.topic_doc_map = {i: [] for i in range(self.nmf_model.n_components)}
 
@@ -116,8 +140,8 @@ class websiteTopicModel:
         self.read_txt()
         self.create_tfidf_matrix()
         self.generate_nmf_model()
-        self.get_topics() 
-        return self.map_topics_to_websites() 
+       # self.get_topics() 
+        #return self.map_topics_to_websites() 
 
 
 
