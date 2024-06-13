@@ -140,8 +140,7 @@ class websiteTopicModel:
         self.read_txt()
         self.create_tfidf_matrix()
         self.generate_nmf_model()
-        self.map_topics_to_websites()
-        #return self.map_topics_to_websites() 
+        return self.map_topics_to_websites()
 
     
 
