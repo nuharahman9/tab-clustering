@@ -90,10 +90,6 @@ class websiteTopicModel:
         terms = self.vectorizer.get_feature_names_out() 
         word_lists = self.convert_strings_to_words()
         dict = Dictionary(word_lists)
-        dict.filter_extremes(
-            no_above=0.85, 
-            keep_n=5000
-        )
         max = math.ceil(len(self.file_paths)) 
         min = 2
         c = 0 
@@ -101,7 +97,7 @@ class websiteTopicModel:
         for i in range(min, max): # dont wanna have a window with just one page - open for suggestion on this one ?
             print('i = ', i)
             curr_topics = [] 
-            self.nmf_model = NMF(n_components=i, random_state=60, solver='mu', max_iter=150)
+            self.nmf_model = NMF(n_components=i, random_state=60, solver='mu')
             self.W = self.nmf_model.fit_transform(self.tfidf_matrix)
             self.H = self.nmf_model.components_  
             curr_topics = self.get_topics()
@@ -116,15 +112,13 @@ class websiteTopicModel:
 
     def get_topics(self): 
         topics = [] 
+        word_topics = [] 
         terms = self.vectorizer.get_feature_names_out()
         for index, topic in enumerate(self.H):
-            top_terms = topics.append([terms[i] for i in topic.argsort()[-3:]])
-            words = [] 
-            for term in top_terms: 
-                words.extend(term.split())
-            topics.append(words)
-        print(topics)
-        return topics 
+            topics.append([terms[i] for i in topic.argsort()[-3:]])
+        for topic in topics: 
+            word_topics.append([word for phrase in topic for word in phrase.split()])  
+        return word_topics 
 
     def map_topics_to_websites(self): 
         self.topic_doc_map = {i: [] for i in range(self.nmf_model.n_components)}
