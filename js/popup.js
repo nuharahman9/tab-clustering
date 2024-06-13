@@ -22,7 +22,14 @@ function showDiv(n) {
 }
 
 
-
+function showLoad() { 
+    var x = document.getElementsByClassName("slide")
+    var load = document.getElementById("loading")
+    for (i = 0; i < x.length; i++) { 
+        x[i].style.display = "none"; 
+    }
+    load.style.display = "block"; 
+}
 
 async function getNumWindows() { 
     await chrome.tabs.query({ currentWindow: true }).then(tabs => { 
@@ -60,12 +67,14 @@ window.addEventListener('DOMContentLoaded', function() {
         }
         console.log(data)
        this.chrome.runtime.sendMessage(data); 
+       showLoad(); 
     }); 
 
     domainNm.addEventListener('click', () => {
         this.chrome.runtime.sendMessage({
             message: 'clusterUrl'
         }); 
+        showLoad(); 
     })
 
 

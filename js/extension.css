@@ -28,6 +28,11 @@
     cursor: pointer; 
 }
 
+#loading { 
+    width: 60px; 
+    height: 60px;
+}
+
 #popup-window { 
     text-align: center;
     display: flex;
