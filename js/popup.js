@@ -18,6 +18,7 @@ function showDiv(n) {
         x[i].style.display = "none"; 
     }
     // fix this later - keeps throwing an error !!! 
+    console.log(x[slideIdx-1])
     x[slideIdx-1].style.display =  "block"
 }
 
