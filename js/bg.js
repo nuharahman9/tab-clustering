@@ -71,8 +71,11 @@ function sendText(tab, text) {
       },
       body: JSON.stringify({ id: tab.id, url: tab.url, title: tab.title, text: text[0].result })
     })
-    .then(response => response.json()); 
-   // .then(data => console.log('data:', )); 
+    .then(response => response.json())
+    .catch(err => 
+        console.error(tab.url, err)
+        
+    )
 }
 
 

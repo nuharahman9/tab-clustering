@@ -30,7 +30,7 @@ class websiteTopicModel:
 
     def __init__(self, n_components): 
         self.n_components = n_components
-        self.vectorizer = TfidfVectorizer(norm='l2', smooth_idf=True, max_df=0.95, ngram_range=(2, 3), stop_words='english')
+        self.vectorizer = TfidfVectorizer(norm='l2', smooth_idf=True, max_df=0.95, ngram_range=(1, 3), stop_words='english')
         self.file_paths = []
         self.tfidf_matrix = None 
         self.tokens = None 
@@ -92,7 +92,7 @@ class websiteTopicModel:
         best_num_topics = 0 
         best_coherence_score = float('-inf')
         min = 2
-        x = [2, 3, 4, 5, 6, 7, 8, 9]
+        x = [2, 3, 4, 5, 6, 7, 8, 9, 10]
         y = []
         print("approximate_best_n: ", min, max)
         for i in range(min, max): # dont wanna have a window with just one page - open for suggestion on this one ?
@@ -101,7 +101,7 @@ class websiteTopicModel:
             self.W = self.nmf_model.fit_transform(self.tfidf_matrix)
             self.H = self.nmf_model.components_  
             curr_topics = self.get_topics()
-            cm = CoherenceModel(topics=curr_topics, texts=word_lists, dictionary=dict, corpus=corpus, coherence='c_uci')
+            cm = CoherenceModel(topics=curr_topics, texts=word_lists, dictionary=dict, corpus=corpus, coherence='u_mass')
             curr_coherence = round(cm.get_coherence(), 5)
             print('(', i, ',', curr_coherence, ')')
             y.append(curr_coherence)
@@ -111,7 +111,7 @@ class websiteTopicModel:
 
 
         print("best number of components: ", best_num_topics) 
-        self.nmf_model = NMF(n_components=best_num_topics, random_state=1, solver='mu')
+        self.nmf_model = NMF(n_components=best_num_topics, random_state=1, solver='mu', init='nndsvda')
         self.W = self.nmf_model.fit_transform(self.tfidf_matrix)
         self.H = self.nmf_model.components_  
 
