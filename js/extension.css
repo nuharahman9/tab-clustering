@@ -21,6 +21,9 @@
 
 .cluster-btn { 
     background-color: pink;
+    border-radius: 15px; 
+    font-style: italic;
+    padding: 7px; 
     border: none; 
 }
 
@@ -29,14 +32,16 @@
 }
 
 #loading { 
-    width: 60px; 
-    height: 60px;
+    width: 100px; 
+    height: 100px;
 }
+
 
 #popup-window { 
     text-align: center;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-around;
     width: 200px;
-
+    height: 125px; 
 }

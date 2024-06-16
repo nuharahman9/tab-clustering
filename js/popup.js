@@ -23,11 +23,15 @@ function showDiv(n) {
 
 
 function showLoad() { 
-    var x = document.getElementsByClassName("slide")
-    var load = document.getElementById("loading")
+    var buttons = document.getElementsByClassName("scroll-button"); 
+    var x = document.getElementsByClassName("slide"); 
+    var load = document.getElementById("loading"); 
     for (i = 0; i < x.length; i++) { 
         x[i].style.display = "none"; 
     }
+    buttons[0].style.display = "none"; 
+    buttons[1].style.display = "none"; 
+
     load.style.display = "block"; 
 }
 
