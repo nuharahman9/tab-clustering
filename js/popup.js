@@ -8,6 +8,9 @@ function moveDiv(n) {
     showDiv(slideIdx += n)
 }
 
+function getTextContent () { 
+    return document.body.innerText; 
+}
 
 function showDiv(n) { 
     var i 
@@ -62,17 +65,41 @@ observer.observe(target);
 
 
 window.addEventListener('DOMContentLoaded', function() {
-    var myBtn = document.getElementById('textCapture')
+    var txtCapture = document.getElementById('textCapture')
     var numWindows = document.getElementById('numWindows'); 
     var domainNm = document.getElementById('clusterDomain'); 
-    myBtn.addEventListener('click', () => {
-        let data = { 
-            message: 'getText', 
-            numWindows: numWindows.value ? numWindows.value : -1  // to do: add functionality for when windows is not input 
-        }
-        console.log(data)
-       this.chrome.runtime.sendMessage(data); 
-       showLoad(); 
+    var tabsToSend = [] 
+    txtCapture.addEventListener('click', async () => {
+        await chrome.tabs.query({ currentWindow: true }).then(tabs => { 
+            let promises = tabs.map(tab => {
+                console.log(tab.url)
+                return chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    func: getTextContent,  
+                    args: [ tab.url ]
+                }).then(text => {
+                    tabsToSend.push({tab: tab, text: text[0].result })
+                }).catch(e => { 
+                    console.error("error: ", e)
+                })
+                ;
+            });
+
+            Promise.all(promises).then(() => {
+                let data = { 
+                    message: 'sendText',
+                    tabs: tabsToSend, 
+                    numWindows: numWindows.value ? numWindows.value : -1  // to do: add functionality for when windows is not input 
+                }
+                console.log("data: ", data)
+               this.chrome.runtime.sendMessage(data); 
+               showLoad(); 
+            }).catch(error => {
+                console.error("err: ", error);
+            });
+
+        })
+
     }); 
 
     domainNm.addEventListener('click', () => {

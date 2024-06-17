@@ -1,10 +1,4 @@
-// grabs the text from document 
-function getTextContent() {
-    return document.body.innerText;  
-}
-
-
-// recieves groups for tabs 
+// recieves groups for tabs
 function rearrangeTabs(tabGroups) { 
     console.log(tabGroups)
     for (const topic in tabGroups) { 
@@ -63,19 +57,17 @@ async function cluster(numWindows) {
 }
 
 // sends text content of website to flask 
-function sendText(tab, text) {
-    fetch('http://127.0.0.1:5000/upload', {
+async function sendText(tab, text) {
+    const response = fetch('http://127.0.0.1:5000/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ id: tab.id, url: tab.url, title: tab.title, text: text[0].result })
+      body: JSON.stringify({ id: tab.id, url: tab.url, title: tab.title, text: text })
     })
-    .then(response => response.json())
-    .catch(err => 
-        console.error(tab.url, err)
-        
-    )
+    
+
+    console.log(response)
 }
 
 
@@ -94,30 +86,17 @@ function getTabCount() {
 
 
 // communication with popup script 
-chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
-    if (data.message === 'getText') {    
-        let numWindows = data.numWindows
-        chrome.tabs.query({ currentWindow: true }, tabs => {
-            let promises = tabs.map(tab => {
-                return chrome.scripting.executeScript({
-                    target: { tabId: tab.id },
-                    func: getTextContent,
-                    args: [tab.id]
-                }).then(text => {
-                    return sendText(tab, text);
-                }).catch(e => { 
-                    console.error("error: ", e)
-                })
-                ;
-            });
+chrome.runtime.onMessage.addListener(async (data, sender, sendResponse) => {
+    if (data.message == "sendText") { 
+        const tabs = data.tabs
+        console.log("tabs: ", tabs); 
+        const numWindows = data.numWindows
+        let promises = tabs.map(tab => {
+            return sendText(tab.tab, tab.text)
+        })
 
-            Promise.all(promises).then(() => {
-                console.log("in promise"); 
-                cluster(numWindows);
-            }).catch(error => {
-                console.error("err: ", error);
-            });
-        });
+        Promise.all(promises).then(() => cluster(numWindows)); 
+
     }
 
     else if (data.message === 'clusterUrl') { 

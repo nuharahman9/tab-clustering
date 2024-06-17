@@ -83,7 +83,8 @@ def upload_text():
     id = data.get('id')
     title = data.get('title')
     text = data.get('text')
-
+    print("text: ")
+    print(text)
     global url_id_map
     if url and text:
         filename = url.replace('http://', '').replace('https://', '').replace('/', '_')
