@@ -1,8 +1,30 @@
+const isFirefox = navigator.userAgent.includes('Firefox');
+
+const pdfjsLib = window['/js/pdfjs-dist/build/pdf'];
+console.log("pdf js: ", pdfjsLib); 
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/js/pdfjs-dist/build/pdf.worker';
+
+
 var slideIdx = 1 
 showDiv(1)
 
 document.getElementById('left-scroll').addEventListener('click', () => moveDiv(-1)); 
 document.getElementById('right-scroll').addEventListener('click', () => moveDiv(+1))
+
+
+async function getPDFContent(tabUrl) { 
+    console.log(tabUrl)
+    const pdf = await getDocument({
+        url: tabUrl, 
+        cMapUrl: '../node_modules/pdfjs-dist/cmaps/', 
+        cMapPacked: true
+    }).promise.then(function (pdf) {
+        var pages = pdf.numPages
+        console.log(pdf)
+    })
+}
+
+
 
 function moveDiv(n) { 
     showDiv(slideIdx += n)
@@ -75,9 +97,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 console.log(tab.url)
                 return chrome.scripting.executeScript({
                     target: { tabId: tab.id },
-                    func: getTextContent,  
+                    func: (tab.url.endsWith('.pdf') ? getPDFContent : getTextContent),  
                     args: [ tab.url ]
                 }).then(text => {
+                    console.log("text len: ", text.length)
                     tabsToSend.push({tab: tab, text: text[0].result })
                 }).catch(e => { 
                     console.error("error: ", e)

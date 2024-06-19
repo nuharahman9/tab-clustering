@@ -78,13 +78,13 @@ def cluster():
 
 @app.route('/upload', methods=['POST']) 
 def upload_text():
+    print("upload_text")
     data = request.get_json()
     url = data.get('url')
     id = data.get('id')
     title = data.get('title')
     text = data.get('text')
-    print("text: ")
-    print(text)
+    print(len(text))
     global url_id_map
     if url and text:
         filename = url.replace('http://', '').replace('https://', '').replace('/', '_')

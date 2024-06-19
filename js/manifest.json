@@ -20,7 +20,7 @@
       {
         "matches": ["<all_urls>"], 
         "css": ["extension.css"], 
-        "js": ["popup.js"]
+        "js": [ "popup.js"]
       }
     ]
   }

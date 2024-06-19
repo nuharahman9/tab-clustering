@@ -58,6 +58,7 @@ async function cluster(numWindows) {
 
 // sends text content of website to flask 
 async function sendText(tab, text) {
+    console.log("text length: ", text.length)
     const response = fetch('http://127.0.0.1:5000/upload', {
       method: 'POST',
       headers: {

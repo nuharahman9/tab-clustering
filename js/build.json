@@ -1,0 +1,15 @@
+"xtbuild": {
+    "js_bundles": [
+      {
+        "name": "background",
+        "src": "./src/background.js"
+      },
+      {
+        "name": "app",
+        "src": [
+            "./src/app/dir1/**/*.js",
+            "./src/app/dir2/**/*.js"
+         ]
+      }
+    ]
+}
